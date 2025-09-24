@@ -1,4 +1,5 @@
 import { reactive, ref, onMounted } from 'vue'
+import axios from 'axios'
 
 const API_URL = 'https://68d3a6f1214be68f8c66a90a.mockapi.io/api/v1/Hobby'
 
@@ -30,11 +31,10 @@ export function useHobbies() {
   async function fetchHobbies() {
     loading.value = true
     try {
-      const res = await fetch(API_URL)
-      const data = await res.json()
+      const { data } = await axios.get(API_URL)
       hobbies.value = data
     } catch (err) {
-      error.value = err.message
+      error.value = err.response?.data?.message || err.message
     } finally {
       loading.value = false
     }
@@ -43,22 +43,17 @@ export function useHobbies() {
   async function handleSubmit() {
     if (!validate()) return
 
-    if (editingId.value) {
-      await fetch(`${API_URL}/${editingId.value}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formState }),
-      })
-    } else {
-      await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formState }),
-      })
+    try {
+      if (editingId.value) {
+        await axios.put(`${API_URL}/${editingId.value}`, { ...formState })
+      } else {
+        await axios.post(API_URL, { ...formState })
+      }
+      await fetchHobbies()
+      resetForm()
+    } catch (err) {
+      error.value = err.response?.data?.message || err.message
     }
-
-    await fetchHobbies()
-    resetForm()
   }
 
   function startEdit(hobby) {
@@ -71,9 +66,13 @@ export function useHobbies() {
   }
 
   async function removeHobby(id) {
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' })
-    await fetchHobbies()
-    if (editingId.value === id) resetForm()
+    try {
+      await axios.delete(`${API_URL}/${id}`)
+      await fetchHobbies()
+      if (editingId.value === id) resetForm()
+    } catch (err) {
+      error.value = err.response?.data?.message || err.message
+    }
   }
 
   function resetForm() {
