@@ -28,7 +28,7 @@
         Login
       </RouterLink>
 
-      <button v-else class="nav-link" @click="handleLogout">Logout</button>
+      <RouterLink v-else to="/auth" class="nav-link" @click="handleLogout"> Logout </RouterLink>
     </div>
   </nav>
 </template>

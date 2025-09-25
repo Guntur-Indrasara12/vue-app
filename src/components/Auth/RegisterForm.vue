@@ -19,8 +19,13 @@
           <label for="confirm-password">Confirm Password</label>
           <input type="password" id="confirm-password" v-model="confirmPassword" required />
         </div>
-        <button type="submit" class="auth-button">Register</button>
+        <button type="submit" class="auth-button" :disabled="auth.loading">
+          {{ auth.loading ? 'Loading...' : 'Register' }}
+        </button>
       </form>
+
+      <p v-if="auth.error" class="error">{{ auth.error }}</p>
+
       <div class="auth-links">
         <a href="#" @click.prevent="$emit('switch-view', 'login')">Back to Login</a>
       </div>
@@ -30,20 +35,36 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 
-defineEmits(['show-login'])
+const router = useRouter()
+const auth = useAuthStore()
 
-const handleRegister = () => {
+defineEmits(['switch-view'])
+
+const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
     alert('Passwords do not match!')
     return
   }
-  console.log('Register attempt with:', name.value, email.value, password.value)
+
+  try {
+    await auth.register({
+      name: name.value,
+      email: email.value,
+      password: password.value,
+    })
+
+    router.push('/')
+  } catch (err) {
+    console.error('Register gagal:', err.message)
+  }
 }
 </script>
 

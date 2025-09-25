@@ -23,14 +23,23 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const email = ref('')
 const password = ref('')
+const router = useRouter()
+const auth = useAuthStore()
 
-defineEmits(['show-register', 'show-forgot-password'])
+defineEmits(['switch-view'])
 
-const handleLogin = () => {
-  console.log('Login attempt with:', email.value, password.value)
+const handleLogin = async () => {
+  try {
+    await auth.login({ email: email.value, password: password.value })
+    router.push('/')
+  } catch {
+    alert('incorrect user or password ')
+  }
 }
 </script>
 
