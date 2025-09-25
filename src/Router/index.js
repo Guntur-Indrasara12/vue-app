@@ -5,7 +5,7 @@ import ProfileView from '@/components/profile/ProfileForm.vue'
 import LoginForm from '@/components/Auth/LoginForm.vue'
 import RegisterForm from '@/components/Auth/RegisterForm.vue'
 import ForgotPasswordForm from '@/components/Auth/ForgotForm.vue'
-import HobbyForm from '@/components/Hobby/HobbyForm.vue'
+import HobbyForm from '@/pages/HobbyPage.vue'
 import LandingPage from '@/pages/LandingPage.vue'
 
 const routes = [
