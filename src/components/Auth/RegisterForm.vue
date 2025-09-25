@@ -4,10 +4,6 @@
       <h2 class="auth-title">Register</h2>
       <form @submit.prevent="handleRegister">
         <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" v-model="name" required />
-        </div>
-        <div class="form-group">
           <label for="email">Email</label>
           <input type="email" id="email" v-model="email" required />
         </div>
@@ -27,7 +23,7 @@
       <p v-if="auth.error" class="error">{{ auth.error }}</p>
 
       <div class="auth-links">
-        <a href="#" @click.prevent="$emit('switch-view', 'login')">Back to Login</a>
+        <a href="#" @click.prevent="router.push('/auth/login')">Back to Login</a>
       </div>
     </div>
   </div>
@@ -35,18 +31,14 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import router from '@/Router'
 
-const name = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 
-const router = useRouter()
 const auth = useAuthStore()
-
-defineEmits(['switch-view'])
 
 const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
@@ -56,12 +48,14 @@ const handleRegister = async () => {
 
   try {
     await auth.register({
-      name: name.value,
       email: email.value,
       password: password.value,
     })
 
-    router.push('/')
+    const userId = auth.user?.id
+    if (!userId) throw new Error('User ID tidak ditemukan')
+
+    router.push({ name: 'Profile', params: { id: userId } })
   } catch (err) {
     console.error('Register gagal:', err.message)
   }

@@ -1,14 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-import Home from '@/pages/LandingPage.vue'
-import Hobby from '@/pages/HobbyPage.vue'
-import AuthPage from '@/pages/AuthPage.vue'
+import ProfileView from '@/components/profile/ProfileForm.vue'
+import LoginForm from '@/components/Auth/LoginForm.vue'
+import RegisterForm from '@/components/Auth/RegisterForm.vue'
+import ForgotPasswordForm from '@/components/Auth/ForgotForm.vue'
+import HobbyForm from '@/components/Hobby/HobbyForm.vue'
+import LandingPage from '@/pages/LandingPage.vue'
 
 const routes = [
-  { path: '/', name: 'Home', component: Home },
-  { path: '/auth', name: 'Auth', component: AuthPage },
-  { path: '/hobby', name: 'Hobby', component: Hobby, meta: { requiresAuth: true } },
+  { path: '/', name: 'Home', component: LandingPage },
+  { path: '/auth/login', name: 'Login', component: LoginForm },
+  { path: '/auth/register', name: 'Register', component: RegisterForm },
+  { path: '/auth/forgot-password', name: 'ForgotPassword', component: ForgotPasswordForm },
+  {
+    path: '/auth/profile/:id',
+    name: 'Profile',
+    component: ProfileView,
+    meta: { requiresAuth: true },
+  },
+  { path: '/hobby', name: 'Hobby', component: HobbyForm, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({

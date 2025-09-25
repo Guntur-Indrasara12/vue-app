@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import bcrypt from 'bcryptjs'
+import { v4 as uuidv4 } from 'uuid'
 
 const API_URL = 'https://wtdjubqncxawktbspfqx.supabase.co/rest/v1'
 const SUPABASE_ANON_KEY =
@@ -23,21 +24,22 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.token,
   },
   actions: {
-    async register({ email, password, name }) {
+    async register({ email, password }) {
       this.loading = true
       this.error = null
       try {
         const hashedPassword = await bcrypt.hash(password, 10)
+        const token = uuidv4()
         await axios.post(
           `${API_URL}/app_users`,
-          { email, password: hashedPassword, name },
+          { email, password: hashedPassword, token },
           { headers },
         )
         const res = await axios.get(`${API_URL}/app_users?email=eq.${email}`, { headers })
         const user = res.data[0]
         if (!user) throw new Error('Gagal mengambil user setelah register')
         this.user = user
-        this.token = user.id
+        this.token = user.token
         localStorage.setItem('token', this.token)
       } catch (err) {
         this.error = err.message
@@ -57,7 +59,7 @@ export const useAuthStore = defineStore('auth', {
         const match = await bcrypt.compare(password, user.password)
         if (!match) throw new Error('Password salah')
         this.user = user
-        this.token = user.id
+        this.token = user.token
         localStorage.setItem('token', this.token)
       } catch (err) {
         this.error = err.message
@@ -70,7 +72,7 @@ export const useAuthStore = defineStore('auth', {
     async fetchUser() {
       if (!this.token) return
       try {
-        const res = await axios.get(`${API_URL}/app_users?id=eq.${this.token}`, { headers })
+        const res = await axios.get(`${API_URL}/app_users?token=eq.${this.token}`, { headers })
         const user = res.data[0]
         if (!user) this.logout()
         else this.user = user

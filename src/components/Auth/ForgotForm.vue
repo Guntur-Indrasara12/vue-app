@@ -28,7 +28,7 @@
       </form>
 
       <div class="auth-links">
-        <a href="#" @click.prevent="$emit('switch-view', 'login')">Back to Login</a>
+        <a href="#" @click.prevent="router.push('/auth/login')">Back to Login</a>
       </div>
     </div>
   </div>
@@ -37,6 +37,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import router from '@/Router'
 
 const step = ref(1)
 const email = ref('')

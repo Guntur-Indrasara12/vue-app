@@ -21,14 +21,16 @@
 
       <RouterLink
         v-if="!auth.isAuthenticated"
-        to="/auth"
+        to="/auth/login"
         class="nav-link"
-        :class="{ 'is-active': $route.path === '/auth' }"
+        :class="{ 'is-active': $route.path === '/auth/login' }"
       >
         Login
       </RouterLink>
 
-      <RouterLink v-else to="/auth" class="nav-link" @click="handleLogout"> Logout </RouterLink>
+      <RouterLink v-else to="/auth/login" class="nav-link" @click="handleLogout">
+        Logout
+      </RouterLink>
     </div>
   </nav>
 </template>
@@ -42,7 +44,7 @@ const router = useRouter()
 
 function handleLogout() {
   auth.logout()
-  router.push('/auth')
+  router.push('/auth/login')
 }
 </script>
 
