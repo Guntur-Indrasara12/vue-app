@@ -102,7 +102,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import Navbar from '../components/Navbar.vue'
+import Navbar from '../components/NavbarPage.vue'
 
 const stats = [
   {
@@ -188,7 +188,6 @@ body {
   border-bottom: 1px solid rgba(226, 232, 240, 0.06);
   backdrop-filter: blur(32px);
 }
-
 
 .hero-content {
   max-width: 680px;

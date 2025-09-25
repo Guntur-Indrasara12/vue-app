@@ -4,19 +4,46 @@
       <span class="brand-mark" aria-hidden="true"></span>
       <span class="brand-name">Hobby Control Center</span>
     </div>
+
     <div class="nav-links">
       <RouterLink to="/" class="nav-link" :class="{ 'is-active': $route.path === '/' }">
         Beranda
       </RouterLink>
-      <RouterLink to="/hobby" class="nav-link" :class="{ 'is-active': $route.path === '/hobby' }">
+
+      <RouterLink
+        v-if="auth.isAuthenticated"
+        to="/hobby"
+        class="nav-link"
+        :class="{ 'is-active': $route.path === '/hobby' }"
+      >
         Hobby
       </RouterLink>
+
+      <RouterLink
+        v-if="!auth.isAuthenticated"
+        to="/auth"
+        class="nav-link"
+        :class="{ 'is-active': $route.path === '/auth' }"
+      >
+        Login
+      </RouterLink>
+
+      <button v-else class="nav-link" @click="handleLogout">Logout</button>
     </div>
   </nav>
 </template>
 
 <script setup>
-// Komponen navbar yang reusable untuk semua halaman
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+
+const auth = useAuthStore()
+const router = useRouter()
+
+function handleLogout() {
+  auth.logout()
+  router.push('/auth')
+}
 </script>
 
 <style scoped>

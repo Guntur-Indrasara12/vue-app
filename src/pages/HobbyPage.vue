@@ -3,8 +3,8 @@ import { useHobbies } from '@/API/UseHobby.js'
 import HobbyForm from '@/components/Hobby/HobbyForm.vue'
 import HobbyTable from '@/components/Hobby/HobbyTable.vue'
 import HobbyStats from '@/components/Hobby/HobbyStats.vue'
-import Navbar from '@/components/Navbar.vue'
-import '@/assets/landing.css'
+import Navbar from '@/components/NavbarPage.vue'
+import '@/assets/all.css'
 
 const {
   hobbies,
@@ -24,7 +24,7 @@ const {
     <header class="hero">
       <Navbar />
     </header>
-    
+
     <main class="crud-app">
       <section class="panel">
         <header class="panel-header">
@@ -35,14 +35,14 @@ const {
           <HobbyStats :hobbies="hobbies" :editingId="editingId" />
         </header>
 
-      <HobbyForm
-        :formState="formState"
-        :handleSubmit="handleSubmit"
-        :cancelEdit="cancelEdit"
-        :editingId="editingId"
-        :errors="errors"
-        :error="error"
-      />
+        <HobbyForm
+          :formState="formState"
+          :handleSubmit="handleSubmit"
+          :cancelEdit="cancelEdit"
+          :editingId="editingId"
+          :errors="errors"
+          :error="error"
+        />
 
         <HobbyTable :hobbies="hobbies" :startEdit="startEdit" :removeHobby="removeHobby" />
       </section>

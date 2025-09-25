@@ -1,35 +1,37 @@
 :root {
-  --color-bg: #0b1120;
-  --color-surface: #111b2a;
-  --color-border: #1f2a3d;
-  --color-text: #f1f5f9;
+  --color-bg: #071427;
+  --color-surface: #0f213f;
+  --color-card: #16325f;
   --color-accent: #38bdf8;
-  --color-accent-strong: #f9a826;
-  --font-primary: 'Inter', 'Segoe UI', sans-serif;
-  --font-mono: 'Roboto Mono', monospace;
-  --radius: 0.75rem;
+  --color-text: #e2e8f0;
+  --font-primary: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  --font-secondary: 'Inter', 'Segoe UI', sans-serif;
+  --radius-base: 18px; /* sama seperti CSS1 */
 }
 
+/* Page layout */
 .crud-app {
+  width: 100%;
   min-height: 100vh;
   background:
     radial-gradient(circle at top, rgba(56, 189, 248, 0.05), transparent 60%), var(--color-bg);
   color: var(--color-text);
-  padding: 1.5rem;
+  padding: 3rem 8vw; /* sesuai CSS1 */
   font-family: var(--font-primary);
-  display: flex;
-  justify-content: center;
 }
 
 /* Panel */
 .panel {
-  width: min(1100px, 100%);
+  width: 100%;
   background: linear-gradient(155deg, rgba(17, 27, 42, 0.9), rgba(17, 27, 42, 0.7));
   border: 1px solid rgba(56, 189, 248, 0.12);
   backdrop-filter: blur(12px);
   padding: 2.5rem;
   border-radius: calc(var(--radius) * 1.2);
   box-shadow: 0 20px 60px rgba(8, 23, 52, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .panel-header {
@@ -255,6 +257,7 @@ tbody tr:hover {
 @media (max-width: 768px) {
   .panel {
     padding: 1.75rem;
+    border-radius: var(--radius);
   }
 
   th,
