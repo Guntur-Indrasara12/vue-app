@@ -28,30 +28,14 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       try {
         const hashedPassword = await bcrypt.hash(password, 10)
-        const res = await axios.post(
-          `${API_URL}/users`,
+        await axios.post(
+          `${API_URL}/app_users`,
           { email, password: hashedPassword, name },
           { headers },
         )
-        this.user = res.data[0]
-        this.token = res.data[0].id
-        localStorage.setItem('token', this.token)
-      } catch (err) {
-        this.error = err.message
-        throw err
-      } finally {
-        this.loading = false
-      }
-    },
-    async login({ email, password }) {
-      this.loading = true
-      this.error = null
-      try {
-        const res = await axios.get(`${API_URL}/users?email=eq.${email}`, { headers })
+        const res = await axios.get(`${API_URL}/app_users?email=eq.${email}`, { headers })
         const user = res.data[0]
-        if (!user) throw new Error('Email not found')
-        const match = await bcrypt.compare(password, user.password)
-        if (!match) throw new Error('Invalid password')
+        if (!user) throw new Error('Gagal mengambil user setelah register')
         this.user = user
         this.token = user.id
         localStorage.setItem('token', this.token)
@@ -62,41 +46,67 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false
       }
     },
+
+    async login({ email, password }) {
+      this.loading = true
+      this.error = null
+      try {
+        const res = await axios.get(`${API_URL}/app_users?email=eq.${email}`, { headers })
+        const user = res.data[0]
+        if (!user) throw new Error('Email tidak ditemukan')
+        const match = await bcrypt.compare(password, user.password)
+        if (!match) throw new Error('Password salah')
+        this.user = user
+        this.token = user.id
+        localStorage.setItem('token', this.token)
+      } catch (err) {
+        this.error = err.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
     async fetchUser() {
       if (!this.token) return
       try {
-        const res = await axios.get(`${API_URL}/users?id=eq.${this.token}`, { headers })
-        this.user = res.data[0]
+        const res = await axios.get(`${API_URL}/app_users?id=eq.${this.token}`, { headers })
+        const user = res.data[0]
+        if (!user) this.logout()
+        else this.user = user
       } catch {
         this.logout()
       }
     },
+
     logout() {
       this.user = null
       this.token = null
       localStorage.removeItem('token')
     },
+
     async checkEmail(email) {
       this.error = null
       try {
-        const res = await axios.get(`${API_URL}/users?email=eq.${email}`, { headers })
+        const res = await axios.get(`${API_URL}/app_users?email=eq.${email}`, { headers })
         const user = res.data[0]
-        if (!user) throw new Error('Email not found')
+        if (!user) throw new Error('Email tidak ditemukan')
         return true
       } catch (err) {
         this.error = err.message
         throw err
       }
     },
+
     async updatePassword(email, password) {
       this.error = null
       try {
-        const res = await axios.get(`${API_URL}/users?email=eq.${email}`, { headers })
+        const res = await axios.get(`${API_URL}/app_users?email=eq.${email}`, { headers })
         const user = res.data[0]
-        if (!user) throw new Error('Email not found')
+        if (!user) throw new Error('Email tidak ditemukan')
         const hashedPassword = await bcrypt.hash(password, 10)
         await axios.patch(
-          `${API_URL}/users?id=eq.${user.id}`,
+          `${API_URL}/app_users?id=eq.${user.id}`,
           { password: hashedPassword },
           { headers },
         )
