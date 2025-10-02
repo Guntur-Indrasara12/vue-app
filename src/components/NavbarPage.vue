@@ -20,6 +20,15 @@
       </RouterLink>
 
       <RouterLink
+        v-if="auth.isAuthenticated"
+        :to="`/profile/${auth.user?.id}`"
+        class="nav-link"
+        :class="{ 'is-active': $route.path.startsWith('/profile') }"
+      >
+        Profile
+      </RouterLink>
+
+      <RouterLink
         v-if="!auth.isAuthenticated"
         to="/auth/login"
         class="nav-link"

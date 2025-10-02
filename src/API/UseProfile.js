@@ -1,4 +1,4 @@
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref } from 'vue'
 import axios from 'axios'
 
 const API_URL = 'https://wtdjubqncxawktbspfqx.supabase.co/rest/v1/profile'
@@ -11,24 +11,25 @@ const headers = {
   'Content-Type': 'application/json',
 }
 
-export function useProfile() {
+export function useProfile(userId) {
   const profile = reactive({
     name: '',
     date_birth: '',
     address: '',
     gender: 'male',
     telp: '',
-    users: '',
+    users: userId,
   })
 
   const loading = ref(false)
   const error = ref('')
 
   async function fetchProfile() {
+    if (!userId) return
     loading.value = true
     error.value = ''
     try {
-      const { data } = await axios.get(API_URL, { headers })
+      const { data } = await axios.get(`${API_URL}?users=eq.${userId}`, { headers })
       if (data && data.length > 0) {
         Object.assign(profile, data[0])
       }
@@ -40,25 +41,25 @@ export function useProfile() {
   }
 
   async function saveProfile() {
+    if (!userId) return
+    profile.users = userId
     loading.value = true
     error.value = ''
     try {
-      const { data } = await axios.get(API_URL, { headers })
-      if (data && data.length > 0) {
-        await axios.patch(`${API_URL}?id=eq.${data[0].id}`, profile, { headers })
-      } else {
-        console.log('Creating new profile:', profile)
-
-        await axios.post(API_URL, profile, { headers })
-      }
+      await axios.post(API_URL, [profile], {
+        headers: {
+          ...headers,
+          Prefer: 'resolution=merge-duplicates',
+        },
+      })
+      return true
     } catch (err) {
       error.value = err.response?.data?.message || err.message
+      return false
     } finally {
       loading.value = false
     }
   }
-
-  onMounted(fetchProfile)
 
   return { profile, loading, error, fetchProfile, saveProfile }
 }

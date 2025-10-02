@@ -5,17 +5,16 @@ import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
-const { profile, loading, error, saveProfile } = useProfile()
 
-profile.users = route.params.id
+const { profile, loading, error, fetchProfile, saveProfile } = useProfile(route.params.id)
 
 onMounted(() => {
-  profile.users = route.params.id
+  fetchProfile()
 })
 
 const handleSave = async () => {
-  await saveProfile()
-  if (!error.value) {
+  const success = await saveProfile()
+  if (success) {
     alert('Profile saved!')
     router.push('/')
   }
@@ -54,8 +53,6 @@ const handleSave = async () => {
           <label for="telp">Telephone</label>
           <input type="tel" id="telp" v-model="profile.telp" required />
         </div>
-
-        <input type="hidden" id="users" v-model="profile.users" required />
 
         <button type="submit" class="auth-button" :disabled="loading">
           {{ loading ? 'Saving...' : 'Save' }}
